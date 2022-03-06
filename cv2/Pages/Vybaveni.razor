@@ -1,0 +1,179 @@
+﻿@page "/vybaveni"
+
+<h1>Hospital equipment!</h1>
+
+<table>
+
+    <tr>
+        <th>Name</th>
+        <th>Bought Date</th>
+        <th>Date of a last revision</th>
+        <th>Needs revision?</th>
+    </tr>
+
+    <tbody>
+        @foreach (var item in vybaveni_list)
+        {
+            @if (item.PosledniDatumRevize.Year < DateTime.Now.Year - 2)
+            {
+                item.PotrebujeRevizi = true;
+            };
+
+            @if (item.PotrebujeRevizi == true)
+            {
+                <tr style="background-color:red">
+                    <td>@item.Jmeno</td>
+                    <td>@item.DatumKoupeni</td>
+                    <td>@item.PosledniDatumRevize</td>
+                    <td>@item.PotrebujeRevizi</td>
+                    <td>
+                        <button style="color:forestgreen" @onclick="@(() => Revize(item))">Make a revison</button>
+                    </td>
+                    <td>
+                        <button style="color:red" @onclick="@(() => Remove(item))">Remove</button>
+                    </td>
+
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>@item.Jmeno</td>
+                    <td>@item.DatumKoupeni</td>
+                    <td>@item.PosledniDatumRevize</td>
+                    <td>@item.PotrebujeRevizi</td>
+                    <td>
+                        <button style="color:forestgreen" @onclick="@(() => Revize(item))">Make a revison</button>
+                    </td>
+                    <td>
+                        <button style="color:red" @onclick="@(() => Remove(item))">Remove</button>
+                    </td>
+                </tr>
+
+            }
+
+        }
+
+        
+
+    </tbody>
+
+</table>
+
+
+
+
+@code {
+
+    List<VybaveniModel> items;
+    int cislo;
+
+
+    Random rnd = new Random();
+
+    private static Random random = new Random();
+
+    /// <summary>
+    /// ////////////////////////////////////           VYTVARENI RANDOM POCTU ZAZNAMU           //////////////////
+    /// </summary>
+    public static List<VybaveniModel> vybaveni_list = new List<VybaveniModel>();
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var date1 = new DateTime(2008, 3, 1);
+        var date2 = new DateTime(2002, 5, 1);
+
+        var dateTime = new DateTime(DateTime.Now.Date.Ticks, DateTimeKind.Unspecified);
+
+
+        for (int i = 0; i < rnd.Next(10, 30); i++)
+        {
+            VybaveniModel mod = new VybaveniModel(RandomString(10), RandomDay(), RandomDay2(), false);
+            vybaveni_list.Add(mod);
+        }
+
+    }
+
+    private Random gen = new Random();
+    DateTime RandomDay()
+    {
+        DateTime start = new DateTime(2015, 1, 1);
+        int range = (DateTime.Today - start).Days;
+        return start.AddDays(gen.Next(range));
+    }
+
+    private Random gen1 = new Random();
+    DateTime RandomDay2()
+    {
+        DateTime start = new DateTime(2016, 1, 1);
+        int range = (DateTime.Today - start).Days;
+        return start.AddDays(gen1.Next(range));
+    }
+
+
+
+    public static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+
+    void Remove(VybaveniModel item)
+    {
+
+        vybaveni_list.Remove(item);
+
+    }
+
+
+    void Revize(VybaveniModel item)
+    {
+
+
+        if (item.PotrebujeRevizi == true)
+        {
+
+            item.PotrebujeRevizi = false;
+            item.PosledniDatumRevize = DateTime.Today;
+
+        }
+
+    }
+
+
+
+    public class VybaveniModel
+    {
+        public string Jmeno { get; set; }
+        public DateTime PosledniDatumRevize { get; set; }
+        public DateTime DatumKoupeni { get; set; }
+
+        public bool PotrebujeRevizi { get; set; }
+
+        /*     {
+                 get { return PotrebujeRevizi; }
+                 set {
+
+                     if(PosledniDatumRevize.Year < DateTime.Now.Year - 2)
+                     {
+                         PotrebujeRevizi = true;
+                     };
+                 }
+             }
+             */ // dodelat starsi nez 2 roky
+
+
+        public VybaveniModel(string jmeno, DateTime datumkoupeni, DateTime poslednidatumrevize, bool potrebujerevizi)
+        {
+            Jmeno = jmeno;
+            DatumKoupeni = datumkoupeni;
+            PosledniDatumRevize = poslednidatumrevize;
+            PotrebujeRevizi = potrebujerevizi;
+
+        }
+
+    }
+
+}
