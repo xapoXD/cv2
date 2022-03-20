@@ -1,43 +1,57 @@
-﻿            if (item.EditMod == false)
+﻿
+
+       @if (Item == null) return;
+
+
+          
+ @if (Item.PosledniDatumRevize.Year < DateTime.Now.Year - 2)
+            {
+                Item.PotrebujeRevizi = true;
+            }
+
+
+
+
+            @if (Item.EditMod == false)
             {
 
-                if (item.PotrebujeRevizi == true)
+                @if (Item.PotrebujeRevizi == true)
                 {
-<tr style="background-color:red">
-    <td>@item.Jmeno</td>
-    <td>@item.DatumKoupeni</td>
-    <td>@item.PosledniDatumRevize</td>
-    <td>@item.PotrebujeRevizi</td>
-    <td>
-        <button style="color:forestgreen" @onclick="@(() => Revize(item))">Make a revison</button>
-    </td>
-    <td>
-        <button style="color:red" @onclick="@(() => Remove(item))">Remove</button>
-    </td>
-    <td>
-        <button style="color:blue" @onclick="() => item.EditMod = true">Edit ✏️</button>
-    </td>
+                    <tr style="background-color:red">
+                        <td>@Item.Jmeno</td>
+                        <td>@Item.DatumKoupeni</td>
+                        <td>@Item.PosledniDatumRevize</td>
+                        <td>@Item.PotrebujeRevizi</td>
+                        <td>
+                            <button style="color:forestgreen" @onclick="@(() => Revize(Item))">Make a revison</button>
+                        </td>
+                        <td>
+                            <button style="color:red" @onclick="() => DeleteItemCallback.InvokeAsync()" >Remove</button>
+                        </td>
+                        <td>
+                            <button style="color:blue" @onclick="() => Item.EditMod = true">Edit ✏️</button>
+                        </td>
 
-</tr>
+                    </tr>
                 }
                 else
                 {
-<tr>
-    <td>@item.Jmeno</td>
-    <td>@item.DatumKoupeni</td>
-    <td>@item.PosledniDatumRevize</td>
-    <td>@item.PotrebujeRevizi</td>
-    <td>
-        <button style="color:forestgreen" @onclick="@(() => Revize(item))">Make a revison</button>
-    </td>
-    <td>
-        <button style="color:red" @onclick="@(() => Remove(item))">Remove</button>
-    </td>
-    <td>
-        <button style="color:blue" @onclick="() => item.EditMod = true">Edit ✏️</button>
-    </td>
+                    <tr>
+                        <td>@Item.Jmeno</td>
+                        <td>@Item.DatumKoupeni</td>
+                        <td>@Item.PosledniDatumRevize</td>
+                        <td>@Item.PotrebujeRevizi</td>
+                        <td>
+                            <button style="color:forestgreen" @onclick="@(() => Revize(Item))">Make a revison</button>
+                        </td>
+                        <td>
+                            <button style="color:red" @onclick="() => DeleteItemCallback.InvokeAsync()" >Remove</button>
+                        </td>
+                        <td>
+                            <button style="color:blue" @onclick="() => Item.EditMod = true">Edit ✏️</button>
+                        </td>
 
-</tr>
+                    </tr>
 
                 }
 
@@ -48,46 +62,64 @@
 
 
 
-                if (item.PotrebujeRevizi == true)
+                @if (Item.PotrebujeRevizi == true)
                 {
 
 
-<tr>
-    <td><input class="border-2 border-slate-300" @bind-value=item.Jmeno /> </td>
-    <td><input class="border-2 border-slate-300" @bind-value=item.DatumKoupeni /> </td>
-    <td><input class="border-2 border-slate-300" @bind-value=item.PosledniDatumRevize /> </td>
-    <td>@item.PotrebujeRevizi</td>
+                    <tr>
+                        <td><input class="border-2 border-slate-300" @bind-value=Item.Jmeno /> </td>
+                        <td><input class="border-2 border-slate-300" @bind-value=Item.DatumKoupeni /> </td>
+                        <td><input class="border-2 border-slate-300" @bind-value=Item.PosledniDatumRevize /> </td>
+                        <td>@Item.PotrebujeRevizi</td>
 
-    <td>
-        <button style="color:blue" @onclick="@(() => Revize2(item))">OK</button>
-    </td>
+                        <td>
+                            <button style="color:blue" @onclick="@(() => Revize2(Item))">OK</button>
+                        </td>
 
-</tr>
+                    </tr>
                 }
                 else
                 {
-<tr style="background-color:red">
-    <td><input class="border-2 border-slate-300" @bind-value=item.Jmeno /> </td>
-    <td><input class="border-2 border-slate-300" @bind-value=item.DatumKoupeni /> </td>
-    <td><input class="border-2 border-slate-300" @bind-value=item.PosledniDatumRevize /> </td>
-    <td>@item.PotrebujeRevizi</td>
+                    <tr style="background-color:red">
+                        <td><input class="border-2 border-slate-300" @bind-value=Item.Jmeno /> </td>
+                        <td><input class="border-2 border-slate-300" @bind-value=Item.DatumKoupeni /> </td>
+                        <td><input class="border-2 border-slate-300" @bind-value=Item.PosledniDatumRevize /> </td>
+                        <td>@Item.PotrebujeRevizi</td>
 
-    <td>
-        <button style="color:blue" @onclick="@(() => Revize2(item))">OK</button>
-    </td>
+                        <td>
+                            <button style="color:blue" @onclick="@(() => Revize2(Item))">OK</button>
+                        </td>
 
-</tr>
+                    </tr>
 
                 }
 
             }
 
 
-
 @code {
 
+    void Revize(VybaveniModel Item)
+    {
 
-    [Parameter] public VybaveniModel Item { get; set; }
+
+        if (Item.PotrebujeRevizi == true)
+        {
+
+            Item.PotrebujeRevizi = false;
+            Item.PosledniDatumRevize = DateTime.Today;
+        }
+    }
 
 
-}
+    void Revize2(VybaveniModel Item)
+    {
+        Item.PotrebujeRevizi = false;
+        Item.EditMod = false;
+    }
+  
+    [Parameter] public VybaveniModel Item { get;set; }
+    [Parameter] public EventCallback<VybaveniModel> DeleteItemCallback { get; set; }
+
+
+    }

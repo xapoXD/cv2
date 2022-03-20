@@ -2,7 +2,10 @@
 
 <h1>Hospital equipment!</h1>
 
+<button style="color:blue" @onclick="@NewMod">Add record </button>
+
 <table>
+
 
     <tr>
         <th>Name</th>
@@ -15,105 +18,8 @@
         @foreach (var item in vybaveni_list)
         {
 
-            //   <VybaveniRow Item=item />
-
-            @if (item.PosledniDatumRevize.Year < DateTime.Now.Year - 2)
-            {
-                item.PotrebujeRevizi = true;
-            };
-
-
-            @if (item.EditMod == false)
-            {
-
-                @if (item.PotrebujeRevizi == true)
-                {
-                    <tr style="background-color:red">
-                        <td>@item.Jmeno</td>
-                        <td>@item.DatumKoupeni</td>
-                        <td>@item.PosledniDatumRevize</td>
-                        <td>@item.PotrebujeRevizi</td>
-                        <td>
-                            <button style="color:forestgreen" @onclick="@(() => Revize(item))">Make a revison</button>
-                        </td>
-                        <td>
-                            <button style="color:red" @onclick="@(() => Remove(item))">Remove</button>
-                        </td>
-                        <td>
-                            <button style="color:blue" @onclick="() => item.EditMod = true">Edit ✏️</button>
-                        </td>
-
-                    </tr>
-                }
-                else
-                {
-                    <tr>
-                        <td>@item.Jmeno</td>
-                        <td>@item.DatumKoupeni</td>
-                        <td>@item.PosledniDatumRevize</td>
-                        <td>@item.PotrebujeRevizi</td>
-                        <td>
-                            <button style="color:forestgreen" @onclick="@(() => Revize(item))">Make a revison</button>
-                        </td>
-                        <td>
-                            <button style="color:red" @onclick="@(() => Remove(item))">Remove</button>
-                        </td>
-                        <td>
-                            <button style="color:blue" @onclick="() => item.EditMod = true">Edit ✏️</button>
-                        </td>
-
-                    </tr>
-
-                }
-
-            }
-            else
-            {
-
-
-
-
-                @if (item.PotrebujeRevizi == true)
-                {
-
-
-                    <tr>
-                        <td><input class="border-2 border-slate-300" @bind-value=item.Jmeno /> </td>
-                        <td><input class="border-2 border-slate-300" @bind-value=item.DatumKoupeni /> </td>
-                        <td><input class="border-2 border-slate-300" @bind-value=item.PosledniDatumRevize /> </td>
-                        <td>@item.PotrebujeRevizi</td>
-
-                        <td>
-                            <button style="color:blue" @onclick="@(() => Revize2(item))">OK</button>
-                        </td>
-
-                    </tr>
-                }
-                else
-                {
-                    <tr style="background-color:red">
-                        <td><input class="border-2 border-slate-300" @bind-value=item.Jmeno /> </td>
-                        <td><input class="border-2 border-slate-300" @bind-value=item.DatumKoupeni /> </td>
-                        <td><input class="border-2 border-slate-300" @bind-value=item.PosledniDatumRevize /> </td>
-                        <td>@item.PotrebujeRevizi</td>
-
-                        <td>
-                            <button style="color:blue" @onclick="@(() => Revize2(item))">OK</button>
-                        </td>
-
-                    </tr>
-
-                }
-
-            }
-
-         }
-
-
-
-
-
-
+               <VybaveniRow  Item=item DeleteItemCallback="() => vybaveni_list.Remove(item)"/>
+        }
     </tbody>
 
 </table>
@@ -122,32 +28,15 @@
 
 
 @code {
+    bool isInNewMode;
 
-    List<VybaveniModel> items;
-    int cislo;
+    public static List<VybaveniModel> vybaveni_list = new List<VybaveniModel>();
 
 
-    Random rnd = new Random();
+        Random rnd = new Random();
 
     private static Random random = new Random();
 
-    public static List<VybaveniModel> vybaveni_list = new List<VybaveniModel>();
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-
-
-        var dateTime = new DateTime(DateTime.Now.Date.Ticks, DateTimeKind.Unspecified);
-
-
-        for (int i = 0; i < rnd.Next(10, 30); i++)
-        {
-            VybaveniModel mod = new VybaveniModel(RandomString(10), RandomDay(), RandomDay2(), false, false);
-            vybaveni_list.Add(mod);
-        }
-
-    }
 
     private Random gen = new Random();
     DateTime RandomDay()
@@ -166,6 +55,18 @@
     }
 
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        for (int i = 0; i < rnd.Next(10, 30); i++)
+        {
+            VybaveniModel mod = new VybaveniModel(RandomString(10), RandomDay(), RandomDay2(), false, false);
+            vybaveni_list.Add(mod);
+        }
+
+    }
+
 
     public static string RandomString(int length)
     {
@@ -174,66 +75,14 @@
     }
 
 
-    void Remove(VybaveniModel item)
+
+
+    void NewMod()
     {
-
-        vybaveni_list.Remove(item);
-
+         VybaveniModel mod = new VybaveniModel(RandomString(10), RandomDay(), RandomDay2(), false, false);
+         vybaveni_list.Add(mod);
     }
 
 
-    void Revize(VybaveniModel item)
-    {
-
-
-        if (item.PotrebujeRevizi == true)
-        {
-
-            item.PotrebujeRevizi = false;
-            item.PosledniDatumRevize = DateTime.Today;
-
-        }
-
-    }
-
-
-    void Revize2(VybaveniModel item)
-    {
-        item.PotrebujeRevizi = false;
-        item.EditMod = false;
-    }
-
-
-
-
-
-
-
-
-
-
-
-    public class VybaveniModel
-    {
-        public string Jmeno { get; set; }
-        public DateTime PosledniDatumRevize { get; set; }
-        public DateTime DatumKoupeni { get; set; }
-
-        public bool PotrebujeRevizi { get; set; }
-
-        public bool EditMod { get; set; }
-   
-
-
-        public VybaveniModel(string jmeno, DateTime datumkoupeni, DateTime poslednidatumrevize, bool potrebujerevizi, bool editmod)
-        {
-            Jmeno = jmeno;
-            DatumKoupeni = datumkoupeni;
-            PosledniDatumRevize = poslednidatumrevize;
-            PotrebujeRevizi = potrebujerevizi;
-            EditMod = editmod;
-        }
-
-    }
 
 }
