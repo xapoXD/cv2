@@ -1,1 +1,1 @@
-https://github.com/xapoXD/cv2
+https://github.com/xapoXD/NemocniceDatabaze.git
