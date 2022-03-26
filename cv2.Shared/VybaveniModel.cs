@@ -9,11 +9,6 @@ using System.Windows;
 using System.Windows.Input;
 
 
-
-
-
-
-
 namespace cv2.Shared
 {
 
